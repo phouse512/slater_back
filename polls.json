@@ -1,0 +1,87 @@
+[
+  {
+    "id": 1,
+    "created": "2/12/17 21:30:00",
+    "question": "Will Cavs or Warriors win the Finals",
+    "pre": false,
+    "close_time": "5 hours",
+    "current_votes": 21,
+    "buy_in": 30,
+    "answers": [
+      {
+        "text": "Cavaliers"
+      },
+      {
+        "text": "Warriors"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "created": "2/12/17 21:33:00",
+    "question": "Will Russell Westbrook score a triple-double tonight?",
+    "pre": false,
+    "close_time": "2 hours",
+    "current_votes": 102,
+    "buy_in": 50,
+    "answers": [
+      {
+        "text": "Yes"
+      },
+      {
+        "text": "No"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "created": "2/12/17 21:33:00",
+    "question": "How many offensive rebounds will Tristan Thompson get vs the Warriors?",
+    "pre": false,
+    "close_time": "6 hours",
+    "current_votes": 8,
+    "buy_in": 25,
+    "answers": [
+      {
+        "text": "less than 5"
+      },
+      {
+        "text": "5 or more"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "created": "2/12/17 21:33:00",
+    "question": "Will the Nets score more than 100 points against the Jazz?",
+    "pre": false,
+    "close_time": "6 hours",
+    "current_votes": 42,
+    "buy_in": 30,
+    "answers": [
+      {
+        "text": "Yes"
+      },
+      {
+        "text": "No"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "created": "2/12/17 21:33:00",
+    "question": "Will the Carmelo-Love trade happen by the end of February?",
+    "pre": false,
+    "close_time": "6 hours",
+    "current_votes": 176,
+    "buy_in": 100,
+    "answers": [
+      {
+        "text": "Yes"
+      },
+      {
+        "text": "No"
+      }
+    ]
+  }
+]
