@@ -42,13 +42,27 @@ func main() {
 		os.Exit(1)
 	}
 
-	testString := string(file)
-	fmt.Println(testString)
+	pollString := string(file)
+
+	file, err = ioutil.ReadFile("leaderboard.json")
+	if err != nil {
+		fmt.Printf("File error: %v\n", err)
+		os.Exit(1)
+	}
+
+	leaderString := string(file)
+
+	// initialize gin server
 	r := gin.Default()
 
 	r.GET("/", func(c *gin.Context) {
 		fmt.Println("endpoint hit")
-		c.String(200, testString)
+		c.String(200, pollString)
+	})
+
+	r.GET("/leaderboard", func(c *gin.Context) {
+		fmt.Println("leaderboard endpoint")
+		c.String(200, leaderString)
 	})
 
 	r.Run(":8080")
