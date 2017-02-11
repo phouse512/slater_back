@@ -36,7 +36,7 @@ func main() {
 		//		fmt.Printf("id: %v", id)
 	}
 
-	file, err := ioutil.ReadFile("polls.json")
+	file, err := ioutil.ReadFile("data/polls.json")
 	if err != nil {
 		fmt.Printf("File error: %v\n", err)
 		os.Exit(1)
@@ -44,7 +44,7 @@ func main() {
 
 	pollString := string(file)
 
-	file, err = ioutil.ReadFile("leaderboard.json")
+	file, err = ioutil.ReadFile("data/leaderboard.json")
 	if err != nil {
 		fmt.Printf("File error: %v\n", err)
 		os.Exit(1)
