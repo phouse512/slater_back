@@ -9,9 +9,11 @@
     "buy_in": 30,
     "answers": [
       {
+        "id": 21,
         "text": "Cavaliers"
       },
       {
+        "id": 22,
         "text": "Warriors"
       }
     ]
@@ -26,9 +28,11 @@
     "buy_in": 50,
     "answers": [
       {
+        "id": 23,
         "text": "Yes"
       },
       {
+        "id": 24,
         "text": "No"
       }
     ]
@@ -43,10 +47,16 @@
     "buy_in": 25,
     "answers": [
       {
+        "id": 25,
         "text": "less than 5"
       },
       {
-        "text": "5 or more"
+        "id": 35,
+        "text": "5, 6, 7, or 8"
+      },
+      {
+        "id": 26,
+        "text": "9 or more"
       }
     ]
   },
@@ -60,9 +70,11 @@
     "buy_in": 30,
     "answers": [
       {
+        "id": 27,
         "text": "Yes"
       },
       {
+        "id": 28,
         "text": "No"
       }
     ]
@@ -77,9 +89,11 @@
     "buy_in": 100,
     "answers": [
       {
+        "id": 29,
         "text": "Yes"
       },
       {
+        "id": 30,
         "text": "No"
       }
     ]
