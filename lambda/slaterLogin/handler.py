@@ -8,6 +8,7 @@ def lambda_handler(event, context):
     #   id = 2;
     #   username = phouse512
     #}
+    print("specially deployed")
     
     auth_object = {
         'auth_token': 'fictional-auth-token',
