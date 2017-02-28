@@ -6,7 +6,7 @@ s3 = boto3.client('s3')
 def lambda_handler(event, context):
     
     bucket = 'slater-storage'
-    key = 'data/leaderboard.json'
+    key = 'data/polls.json'
     
     try:
         data = s3.get_object(Bucket=bucket, Key=key)

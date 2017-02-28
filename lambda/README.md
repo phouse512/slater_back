@@ -16,3 +16,11 @@ where the existing Lambda function resides. Here is an example usage:
 ```
 ./updateLambda.sh slaterLogin us-east-1
 ```
+
+If you want to add psycopg2 to the package, updateLambda includes a special
+by which you can install the psycopg package into your zip file. Do so by
+making a call such as this:
+
+```
+./updateLambda.sh -p slaterLogin us-east-1
+```
