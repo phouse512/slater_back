@@ -8,6 +8,8 @@ def lambda_handler(event, context):
     bucket = 'slater-storage'
     key = 'data/confirm.json'
     
+    print("deployed with cli")    
+    
     try:
         data = s3.get_object(Bucket=bucket, Key=key)
         json_data = data['Body'].read()
