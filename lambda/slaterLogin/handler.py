@@ -18,11 +18,10 @@ def lambda_handler(event, context):
                                   host=os.environ['host'],
                                   port=os.environ['port'])
 
-    print(event)
-    print(connection)
+    incoming_object = json.loads(event['body'])
 
     auth_object = {
-        'auth_token': 'fictional-auth-token',
+        'auth_token': incoming_object["username"],
         'created_at': '2017-02-26 22:53:13.143996',
         'expires_at': '2017-03-08 22:53:13.143996'
     }
