@@ -24,3 +24,16 @@ making a call such as this:
 ```
 ./updateLambda.sh -p slaterLogin us-east-1
 ```
+
+#### updateEnvironmentVars
+
+This bash script makes it easy to upload the environment variables of an
+existing Lambda function. The first argument is the name of the Lambda function,
+the second is the region where the function resides. The first is a string
+that contains the environment variables in the format AWS requires.
+
+```
+./updateEnvironmentVars.sh slaterLogin us-east-1 "Variables={host=<some_host>,port=<some_port>,db=<some_db>,user=<some_user>,password=<some_pass>}"
+```
+
+Make sure to encapsulate it in double quotes, otherwise the script will die :(
