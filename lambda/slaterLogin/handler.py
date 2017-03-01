@@ -17,8 +17,21 @@ def lambda_handler(event, context):
                                   password=os.environ['password'],
                                   host=os.environ['host'],
                                   port=os.environ['port'])
+    cursor = connection.cursor()
 
     incoming_object = json.loads(event['body'])
+
+    query = "SELECT * from users WHERE username='%s' LIMIT 1" % incoming_object["username"]
+    cursor.execute(query)
+
+    result = cursor.fetchone()
+
+    if not result:
+        return {
+            'statusCode': 401,
+            'headers': {},
+            'body': ''
+        }
 
     auth_object = {
         'auth_token': incoming_object["username"],
