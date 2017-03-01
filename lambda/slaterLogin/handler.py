@@ -1,4 +1,4 @@
-# import bcrypt
+import bcrypt
 import json
 import os
 import psycopg2
@@ -35,8 +35,8 @@ def lambda_handler(event, context):
             'body': ''
         }
 
-    hashed_input = "test"
-    #hashed_input = bcrypt.hashpw(incoming_object['pw'], result[3])
+    # hashed_input = "test"
+    hashed_input = bcrypt.hashpw(incoming_object['pw'], result[3])
     if hashed_input != result[3]:
         return {
             'statusCode': 403,
