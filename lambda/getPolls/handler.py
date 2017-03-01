@@ -33,7 +33,7 @@ def lambda_handler(event, context):
         json_blob['created'] = poll[6]
         json_blob['pre'] = str(poll[2]).lower()
         json_blob['current_votes'] = 23
-        json_blob['answers'] = json.loads(poll[7])
+        json_blob['answers'] = poll[7]
         json_blob['buy_in'] = poll[4]
         json_blob['question'] = poll[1]
         json_blob['close_time'] = str(poll[3])
