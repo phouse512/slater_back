@@ -1,7 +1,8 @@
-import bcrypt
+import hashlib
 import json
 import os
 import psycopg2
+import uuid
 
 
 def lambda_handler(event, context):
@@ -33,10 +34,11 @@ def lambda_handler(event, context):
             'body': json.dumps({'error': 'User already exists'})
         }
 
-    hashedpw = bcrypt.hashpw(incoming_object['pw'], bcrypt.gensalt())
+    salt = uuid.uuid4().hex
+    hashedpw = hashlib.sha512(incoming_object['pw'] + salt).hexdigest()
 
-    storage_query = "INSERT INTO users (username, pw_hash) values (%s, %s)" % (
-        incoming_object['username'], hashedpw
+    storage_query = "INSERT INTO users (username, pw_hash, salt) values (%s, %s, %s)" % (
+        incoming_object['username'], hashedpw, salt
     )
 
     cursor.execute(storage_query)
