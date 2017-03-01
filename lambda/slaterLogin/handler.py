@@ -1,7 +1,8 @@
-import bcrypt
+import hashlib
 import json
 import os
 import psycopg2
+import uuid
 
 
 def lambda_handler(event, context):
@@ -22,7 +23,7 @@ def lambda_handler(event, context):
 
     incoming_object = json.loads(event['body'])
 
-    query = "SELECT id, username, created_at, pw_hash from users WHERE username='%s' " \
+    query = "SELECT id, username, created_at, pw_hash, salt from users WHERE username='%s' " \
             "LIMIT 1" % incoming_object["username"]
     cursor.execute(query)
 
@@ -35,8 +36,8 @@ def lambda_handler(event, context):
             'body': ''
         }
 
-    # hashed_input = "test"
-    hashed_input = bcrypt.hashpw(incoming_object['pw'], result[3])
+    salt = result[4]
+    hashed_input = hashlib.sha512(incoming_object['pw'] + salt).hexdigest()
     if hashed_input != result[3]:
         return {
             'statusCode': 403,
