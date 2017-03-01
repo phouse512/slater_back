@@ -19,7 +19,6 @@ def lambda_handler(event, context):
                                   host=os.environ['host'],
                                   port=os.environ['port'])
     cursor = connection.cursor()
-
     incoming_object = json.loads(event['body'])
 
     query = "SELECT id, username, created_at, pw_hash from users WHERE username='%s' " \
@@ -27,33 +26,27 @@ def lambda_handler(event, context):
     cursor.execute(query)
 
     result = cursor.fetchone()
-
-    if not result:
+    if result:
         return {
-            'statusCode': 401,
+            'statusCode': 400,
             'headers': {},
-            'body': ''
+            'body': json.dumps({'error': 'User already exists'})
         }
 
-    hashed_input = bcrypt.hashpw(incoming_object['pw'], result[3])
-    if hashed_input != result[3]:
-        return {
-            'statusCode': 403,
-            'headers': {},
-            'body': ''
-        }
+    hashedpw = bcrypt.hashpw(incoming_object['pw'], bcrypt.gensalt())
 
-    # now logged in
+    storage_query = "INSERT INTO users (username, pw_hash) values (%s, %s)" % (
+        incoming_object['username'], hashedpw
+    )
 
-    auth_object = {
-        'auth_token': incoming_object["username"],
-        'created_at': '2017-02-26 22:53:13.143996',
-        'expires_at': '2017-03-08 22:53:13.143996'
-    }
-    
+    cursor.execute(storage_query)
+    connection.commit()
+
     return {
         'statusCode': 200,
         'headers': {},
-        'body': json.dumps(auth_object)
+        'body': ''
     }
+
+
 
