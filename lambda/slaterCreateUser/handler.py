@@ -37,7 +37,7 @@ def lambda_handler(event, context):
     salt = uuid.uuid4().hex
     hashedpw = hashlib.sha512(incoming_object['pw'] + salt).hexdigest()
 
-    storage_query = "INSERT INTO users (username, pw_hash, salt) values (%s, %s, %s)" % (
+    storage_query = "INSERT INTO users (username, pw_hash, salt) values ('%s', '%s', '%s')" % (
         incoming_object['username'], hashedpw, salt
     )
 
