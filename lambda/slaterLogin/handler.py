@@ -20,12 +20,15 @@ def lambda_handler(event, context):
     cursor = connection.cursor()
 
     incoming_object = json.loads(event['body'])
+    print(incoming_object)
 
     query = "SELECT * from users WHERE username='%s' LIMIT 1" % incoming_object["username"]
+    print(query)
     cursor.execute(query)
 
     result = cursor.fetchone()
 
+    print(result)
     if not result:
         return {
             'statusCode': 401,
