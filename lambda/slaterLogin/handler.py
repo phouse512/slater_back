@@ -27,6 +27,7 @@ def lambda_handler(event, context):
     cursor.execute(query)
 
     result = cursor.fetchone()
+    print(result)
 
     if not result:
         return {
@@ -47,11 +48,13 @@ def lambda_handler(event, context):
     # now logged in
     user_object = result
     auth_token_query = "SELECT id, user_id, auth_token FROM auth_tokens WHERE user_id=%d" % user_object[0]
+    print(auth_token_query)
     cursor.execute(auth_token_query)
 
     result = cursor.fetchone()
-
+    print(result)
     if not result:
+        print("here")
         auth_token = uuid.uuid4().hex
         create_auth_query = "INSERT INTO auth_tokens (user_id, auth_token) values (%d, '%s')" % (
             user_object[0], auth_token
@@ -59,8 +62,10 @@ def lambda_handler(event, context):
 
         cursor.execute(create_auth_query)
         connection.commit()
+        print(auth_token)
 
     else:
+        print("or there")
         auth_token = result[2]
         connection.commit()
 
