@@ -8,5 +8,5 @@ create table auth_tokens (
     created_at timestamp default current_timestamp,
     expires_at timestamp default current_timestamp + interval '10 days',
     user_id integer,
-    auth_token char(36)
+    auth_token char(32)
 );
