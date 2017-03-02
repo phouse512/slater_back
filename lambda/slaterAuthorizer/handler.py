@@ -1,5 +1,7 @@
 from __future__ import print_function
 
+import os
+import psycopg2
 import re
 
 
@@ -15,7 +17,24 @@ def lambda_handler(event, context):
     2. Decode a JWT token inline
     3. Lookup in a self-managed DB
     '''
-    principalId = 2
+
+    connection = psycopg2.connect(database=os.environ['db'],
+                                  user=os.environ['user'],
+                                  password=os.environ['password'],
+                                  host=os.environ['host'],
+                                  port=os.environ['port'])
+    cursor = connection.cursor()
+
+    query = "SELECT id, user_id FROM auth_tokens WHERE auth_token='%s' " \
+            "LIMIT 1" % event['authorizationToken']
+
+    cursor.execute(query)
+
+    result = cursor.fetchone()
+    if not result:
+        raise Exception('Unauthorized')
+    
+    principalId = result[1]
 
     '''
     You can send a 401 Unauthorized response to the client by failing like so:
