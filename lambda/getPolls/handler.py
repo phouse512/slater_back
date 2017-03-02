@@ -21,7 +21,7 @@ def lambda_handler(event, context):
     query = "select p.id, p.title, p.is_pre, p.close_time, p.buy_in, p.id, p.created_at, " \
             "json_agg(to_json(pa)) from polls p left join poll_answers pa on " \
             "pa.poll_id=p.id where p.finished=false and p.is_pre=false group by p.id"
-    
+
     cursor.execute(query)
     results = cursor.fetchall()
 

@@ -22,7 +22,6 @@ def lambda_handler(event, context):
     cursor = connection.cursor()
 
     incoming_object = json.loads(event['body'])
-
     query = "SELECT id, username, created_at, pw_hash, salt from users WHERE username='%s' " \
             "LIMIT 1" % incoming_object["username"]
     cursor.execute(query)
@@ -46,9 +45,27 @@ def lambda_handler(event, context):
         }
 
     # now logged in
+    user_object = result
+    auth_token_query = "SELECT id, user_id, auth_token FROM auth_tokens WHERE user_id=%d" % user_object[0]
+    cursor.execute(auth_token_query)
+
+    result = cursor.fetchone()
+
+    if not result:
+        auth_token = uuid.uuid4().hex
+        create_auth_query = "INSERT INTO auth_tokens (user_id, auth_token) values (%d, '%s')" % (
+            user_object[0], auth_token
+        )
+
+        cursor.execute(create_auth_query)
+        connection.commit()
+
+    else:
+        auth_token = result[2]
+        connection.commit()
 
     auth_object = {
-        'auth_token': incoming_object["username"],
+        'auth_token': auth_token,
         'created_at': '2017-02-26 22:53:13.143996',
         'expires_at': '2017-03-08 22:53:13.143996'
     }
