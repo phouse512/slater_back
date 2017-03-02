@@ -20,7 +20,7 @@ def lambda_handler(event, context):
     poll_id = int(event['pathParameters']['poll_id'])
 
     incoming_object = json.loads(event['body'])
-    answer_id = incoming_object['answer_id']
+    answer_id = int(incoming_object['answer_id'])
 
     """
         this chunk of code is responsible for querying the poll, making sure it is valid,
@@ -83,6 +83,7 @@ def lambda_handler(event, context):
 
         result = cursor.fetchone()
         if result:
+            print("shouldn't be here")
             bet_id = result[0]
             # there is an existing bet, don't need to make a new transaction, just update the bet
             update_bet_query = "UPDATE bets set choice_id=%d WHERE id=%d" % (answer_id, bet_id)
