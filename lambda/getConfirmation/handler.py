@@ -27,7 +27,7 @@ def lambda_handler(event, context):
         and getting it's bank account so we can use it later if necessary
     """
     poll_query = "select polls.id as poll, banks.id as bank, banks.balance as balance, is_pre, close_time, buy_in, finished from polls " \
-                 "left join banks on banks.entity_id=polls.id where polls.id=%d and banks.type='poll' " \
+                 "left join banks on banks.entity_id=polls.id where polls.id=%d and banks.type='poll' and " \
                  "polls.is_pre=false and polls.finished=false" % poll_id
     cursor.execute(poll_query)
     poll_result = cursor.fetchone()
