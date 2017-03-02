@@ -33,7 +33,8 @@ def lambda_handler(event, context):
     result = cursor.fetchone()
     if not result:
         raise Exception('Unauthorized')
-    
+
+
     principalId = result[1]
 
     '''
