@@ -100,7 +100,6 @@ def lambda_handler(event, context):
             new_user_balance = user_bank_balance
 
         else:
-            # make a new transaction
             # TODO: add transaction_id to bets table
 
             insert_bet_query = "INSERT INTO bets (user_id, poll_id, choice_id) values " \
