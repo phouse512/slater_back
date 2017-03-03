@@ -22,6 +22,7 @@ def lambda_handler(event, context):
     cursor = connection.cursor()
     incoming_object = json.loads(event['body'])
 
+    # TODO: add validation that password length is greater than 0
     query = "SELECT id, username, created_at, pw_hash from users WHERE username='%s' " \
             "LIMIT 1" % incoming_object["username"]
     cursor.execute(query)
@@ -37,11 +38,18 @@ def lambda_handler(event, context):
     salt = uuid.uuid4().hex
     hashedpw = hashlib.sha512(incoming_object['pw'] + salt).hexdigest()
 
-    storage_query = "INSERT INTO users (username, pw_hash, salt) values ('%s', '%s', '%s')" % (
+    storage_query = "INSERT INTO users (username, pw_hash, salt) values ('%s', '%s', '%s') returning id" % (
         incoming_object['username'], hashedpw, salt
     )
 
     cursor.execute(storage_query)
+    new_user_id = cursor.fetchone()[0]
+    connection.commit()
+
+    create_bank_query = "INSERT INTO banks (entity_id, type, balance) values (%d, 'user', %d)" % (
+        new_user_id, 270
+    )
+    cursor.execute(create_bank_query)
     connection.commit()
 
     return {
