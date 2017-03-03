@@ -40,6 +40,8 @@ def lambda_handler(event, context):
             'body': json.dumps({"error": "invalid poll for id: %d" % poll_id})
         }
 
+    # TODO: assert that given answer id is a valid choice
+
     poll_bank_id = poll_result[1]
     poll_buyin = poll_result[5]
     poll_bank_balance = poll_result[2]
@@ -89,7 +91,7 @@ def lambda_handler(event, context):
             update_bet_query = "UPDATE bets set choice_id=%d WHERE id=%d" % (answer_id, bet_id)
             cursor.execute(update_bet_query)
 
-            existing_money_query = "SELECT id FROM transactions WHERE from_entity=%d and to_entity=%d " \
+            existing_money_query = "SELECT id FROM transactions WHERE from_entity=%d and to_entity=%d and " \
                                    "type='bet' LIMIT 1" % (user_bank_id, poll_bank_id)
             cursor.execute(existing_money_query)
             existing_money_res = cursor.fetchone()
