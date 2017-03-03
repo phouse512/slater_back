@@ -97,6 +97,8 @@ def lambda_handler(event, context):
             existing_money_res = cursor.fetchone()
             transaction_id = existing_money_res[0]
 
+            new_user_balance = user_bank_balance
+
         else:
             # make a new transaction
             # TODO: add transaction_id to bets table
@@ -122,6 +124,8 @@ def lambda_handler(event, context):
                 poll_bank_balance + poll_buyin, poll_bank_id
             )
 
+            new_user_balance = user_bank_balance - poll_buyin
+
             cursor.execute(update_balance_query)
             cursor.execute(update_poll_balance_qs)
 
@@ -140,7 +144,7 @@ def lambda_handler(event, context):
     return_object = {
         'transaction_id': transaction_id,
         'bet_id': bet_id,
-        'new_balance': user_bank_balance - poll_buyin
+        'new_balance': new_user_balance
     }
 
     return {
