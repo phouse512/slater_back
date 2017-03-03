@@ -33,6 +33,8 @@ def lambda_handler(event, context):
         json_blob['buy_in'] = poll[4]
         json_blob['question'] = poll[1]
         json_blob['close_time'] = str(poll[3])
+
+        # TODO: if there are no poll answers, the following fails fast and hard. fix.
         for answer in json_blob['answers']:
             answer['text'] = answer['title']
             answer.pop('title', None)
