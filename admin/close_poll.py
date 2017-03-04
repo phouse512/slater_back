@@ -6,6 +6,9 @@ import yaml
 
 from typing import List
 
+yes = {'yes', 'y', 'ye'}
+no = {'no', 'n', ''}
+
 
 class Transaction(object):
 
@@ -17,6 +20,38 @@ class Transaction(object):
 
     def __str__(self):
         return "from: %d to: %d for balance: %d" % (self.from_id, self.to_id, self.amount)
+
+
+def send_transactions(poll_id: int, transactions: List[Transaction], cursor, connection):
+    """
+    this method takes transactions, puts them into the db and marks the poll as paid out.
+    it also asks you to verify
+    :param poll_id:
+    :param transactions:
+    :param cursor:
+    :param connection:
+    :return:
+    """
+
+    total = 0
+    sys.stdout.write("\n\nThese are the transactions that are going to be written to the db:\n")
+    for idx, transaction in enumerate(transactions):
+        sys.stdout.write("%d) %s\n" % (idx+1, str(transaction)))
+        total += transaction.amount
+
+    sys.stdout.write("A total of %d coins are going to sent from the poll.\n\n" % total)
+    result = input("Does this look correct to you? ")
+
+    if result in no:
+        sys.stderr.write("\nUser-initiated abort. Closing..\n\n")
+        sys.exit()
+    elif result in yes:
+        pass
+    else:
+        sys.stderr.write("\nPlease respond with 'yes' or 'no'.\n\n")
+        sys.exit()
+
+    print("bomb")
 
 
 def divide_pool(poll_id: int, correct_id: int, cursor, conn) -> List[Transaction]:
@@ -86,8 +121,6 @@ def divide_pool(poll_id: int, correct_id: int, cursor, conn) -> List[Transaction
 
 
 def validate(poll_id, correct_id, cursor, conn):
-    yes = {'yes', 'y', 'ye'}
-    no = {'no', 'n', ''}
 
     poll_query = "SELECT title, finished, buy_in FROM polls WHERE id=%d" % poll_id
     cursor.execute(poll_query)
@@ -155,8 +188,7 @@ if not is_valid:
 
 transactions = divide_pool(poll_id, choice_id, cursor, connection)
 
-for transaction in transactions:
-    print(transaction)
+result = send_transactions(poll_id, transactions, cursor, connection)
 
 
 
