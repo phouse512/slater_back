@@ -5,21 +5,10 @@ import time
 import yaml
 
 from typing import List
+from admin.transaction import Transaction
 
 yes = {'yes', 'y', 'ye'}
 no = {'no', 'n', ''}
-
-
-class Transaction(object):
-
-    def __init__(self, from_id: int, to_id: int, category: str, amount: int) -> None:
-        self.from_id = from_id
-        self.to_id = to_id
-        self.category = category
-        self.amount = amount
-
-    def __str__(self):
-        return "from: %d to: %d for balance: %d" % (self.from_id, self.to_id, self.amount)
 
 
 def send_transactions(poll_id: int, transactions: List[Transaction], cursor, connection):
@@ -51,6 +40,13 @@ def send_transactions(poll_id: int, transactions: List[Transaction], cursor, con
         sys.stderr.write("\nPlease respond with 'yes' or 'no'.\n\n")
         sys.exit()
 
+    # write sql to insert these
+
+    # update poll balance, update balance of respective users
+
+    # update poll to be paid out, along with correct choice id
+
+    print(Transaction.create_list_sql(transactions))
     print("bomb")
 
 
@@ -91,32 +87,58 @@ def divide_pool(poll_id: int, correct_id: int, cursor, conn) -> List[Transaction
 
     answer_sums = {}
     payout_map = {}  # a dict with bank ids with their respective balances
-    payout_array = []
+    winner_payout_array = []
+    loser_payout_array = []
 
     for bet in transactions_results:
         answer_sums[bet[1]] = answer_sums.get(bet[1], 0) + 1
 
         if bet[1] == correct_id:
             payout_map[bet[2]] = 0
-            payout_array.append(bet[2])
+            winner_payout_array.append(bet[2])
+        else:
+            loser_payout_array.append(bet[2])
+
+    if len(winner_payout_array) < 1:
+        # no winners... return all the money to the losers
+        losing_transactions = []
+        loser_total = 0
+        for loser in loser_payout_array:
+            new_lose_transaction = Transaction(poll_bank_id, loser, 'payout', poll_buyin)
+            losing_transactions.append(new_lose_transaction)
+            loser_total += poll_buyin
+
+        if loser_total != pool_size:
+            print('we got a problem, no winners, and loser transactions didn\'t add up')
+            raise Exception("transaction mismatch")
+
+        return losing_transactions
 
     for coin in range(1, pool_size+1):
-        bank_id = payout_array[coin % len(payout_array)]
+        bank_id = winner_payout_array[coin % len(winner_payout_array)]
         payout_map[bank_id] += 1
 
     print(payout_map)
 
     new_total = 0
     transactions = []
+    # add the winner transactions
     for key in payout_map:
         new_transactions = Transaction(poll_bank_id, key, 'payout', payout_map[key])
         new_total += payout_map[key]
         transactions.append(new_transactions)
 
+    # add the loser transactions
+    for loser in loser_payout_array:
+        new_transaction = Transaction(poll_bank_id, loser, 'payout', 0)
+        transactions.append(new_transaction)
+
     if new_total != pool_size:
         sys.stderr.write("transactions distribution doesn't match up.. expected %d but got %d" % (
             pool_size, new_total
         ))
+        sys.exit()
+
     return transactions
 
 
@@ -153,42 +175,44 @@ def validate(poll_id, correct_id, cursor, conn):
         sys.exit()
 
 
-with open('db.yml', 'r') as stream:
-    try:
-        print("loading db config from yml")
-        db_config = yaml.load(stream)['db_creds']
-    except yaml.YAMLError as e:
-        print(e)
-        print('unable to load yaml')
+def run():
+
+    with open('admin/db.yml', 'r') as stream:
+        try:
+            print("loading db config from yml")
+            db_config = yaml.load(stream)['db_creds']
+        except yaml.YAMLError as e:
+            print(e)
+            print('unable to load yaml')
+            sys.exit()
+
+    connection = psycopg2.connect(database=db_config['database'],
+                                  user=db_config['user'],
+                                  password=db_config['password'],
+                                  host=db_config['host'],
+                                  port=db_config['port'])
+    cursor = connection.cursor()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("poll_id", help="id of poll to close")
+    parser.add_argument("choice_id", help="id of choice to close")
+
+    args = parser.parse_args()
+
+    poll_id = int(args.poll_id)
+    choice_id = int(args.choice_id)
+
+    # TODO: query for title and answer
+
+    is_valid = validate(poll_id, choice_id, cursor, connection)
+
+    if not is_valid:
+        sys.stdout.write("Please correct your input data.\n\n")
         sys.exit()
 
-connection = psycopg2.connect(database=db_config['database'],
-                              user=db_config['user'],
-                              password=db_config['password'],
-                              host=db_config['host'],
-                              port=db_config['port'])
-cursor = connection.cursor()
+    transactions = divide_pool(poll_id, choice_id, cursor, connection)
 
-parser = argparse.ArgumentParser()
-parser.add_argument("poll_id", help="id of poll to close")
-parser.add_argument("choice_id", help="id of choice to close")
-
-args = parser.parse_args()
-
-poll_id = int(args.poll_id)
-choice_id = int(args.choice_id)
-
-# TODO: query for title and answer
-
-is_valid = validate(poll_id, choice_id, cursor, connection)
-
-if not is_valid:
-    sys.stdout.write("Please correct your input data.\n\n")
-    sys.exit()
-
-transactions = divide_pool(poll_id, choice_id, cursor, connection)
-
-result = send_transactions(poll_id, transactions, cursor, connection)
+    result = send_transactions(poll_id, transactions, cursor, connection)
 
 
 

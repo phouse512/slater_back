@@ -9,7 +9,15 @@ this script is responsible for distributing coins out once a poll is closed. the
 are the poll id and the correct answer id. it requires you to approve of them before it occurs.
 also you need to close the poll by setting the `finished` flag to true before running this.
 
-Example usage:
+Example usage (run from `slater_back` root):
 ```
-python3 close_poll.py <poll_id> <correct_answer_id>
+python3 -m admin <poll_id> <correct_answer_id>
+```
+
+#### unit tests
+
+to run the unit tests, run the following:
+
+```
+python3 -m unittest
 ```
