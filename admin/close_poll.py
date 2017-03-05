@@ -11,7 +11,7 @@ yes = {'yes', 'y', 'ye'}
 no = {'no', 'n', ''}
 
 
-def send_transactions(poll_id: int, transactions: List[Transaction], cursor, connection):
+def send_transactions(poll_id: int, correct_id: int, transactions: List[Transaction], cursor, connection):
     """
     this method takes transactions, puts them into the db and marks the poll as paid out.
     it also asks you to verify
@@ -41,12 +41,35 @@ def send_transactions(poll_id: int, transactions: List[Transaction], cursor, con
         sys.exit()
 
     # write sql to insert these
+    try:
+        insert_query = Transaction.create_list_sql(transactions)
+        print(insert_query)
+        cursor.execute(insert_query)
 
+        for transaction in transactions:
+            update_user_bank_sql = "UPDATE banks SET balance=balance + %d WHERE id=%d" % (transaction.amount,
+                                                                                          transaction.to_id)
+            print(update_user_bank_sql)
+            cursor.execute(update_user_bank_sql)
+
+        update_poll_bank_sql = "UPDATE banks SET balance=0 WHERE id=%d" % transactions[0].from_id
+        print(update_poll_bank_sql)
+        cursor.execute(update_poll_bank_sql)
+
+        update_poll_sql = "UPDATE polls SET has_paid=true, correct_answer=%d WHERE id=%d" % (correct_id, poll_id)
+        print(update_poll_sql)
+        cursor.execute(update_poll_sql)
+
+    except Exception as e:
+        connection.rollback()
+        sys.stderr.write("\nCaught an error: %s" % e)
+        sys.stderr.write("\nAborting now, and rolling back all changes..\n\n")
+        sys.exit()
     # update poll balance, update balance of respective users
 
     # update poll to be paid out, along with correct choice id
 
-    print(Transaction.create_list_sql(transactions))
+    connection.commit()
     print("bomb")
 
 
@@ -211,8 +234,7 @@ def run():
         sys.exit()
 
     transactions = divide_pool(poll_id, choice_id, cursor, connection)
-
-    result = send_transactions(poll_id, transactions, cursor, connection)
+    send_transactions(poll_id, choice_id, transactions, cursor, connection)
 
 
 
