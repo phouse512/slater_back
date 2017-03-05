@@ -14,6 +14,11 @@ Example usage (run from `slater_back` root):
 python3 -m admin <poll_id> <correct_answer_id>
 ```
 
+#### add_poll
+
+next up is a script to add a poll and its answers. This needs to creat its bank
+account and a couple other cleanup tasks.
+
 #### unit tests
 
 to run the unit tests, run the following:
