@@ -22,6 +22,8 @@ def lambda_handler(event, context):
     cursor = connection.cursor()
     incoming_object = json.loads(event['body'])
 
+    # TODO: add validation that incoming attributes were sent correctly
+
     # TODO: add validation that password length is greater than 0
     query = "SELECT id, username, created_at, pw_hash from users WHERE username='%s' " \
             "LIMIT 1" % incoming_object["username"]

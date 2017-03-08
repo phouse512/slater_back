@@ -63,6 +63,18 @@ def lambda_handler(event, context):
         auth_token = result[2]
         connection.commit()
 
+    """
+    insert device token into table on login
+    """
+
+    if 'device_token' in incoming_object:
+
+        insert_token_query = "INSERT INTO device_tokens (user_id, token) values (%d, '%s')" % (
+            user_object[0], incoming_object['device_token']
+        )
+        cursor.execute(insert_token_query)
+        connection.commit()
+
     auth_object = {
         'auth_token': auth_token,
         'created_at': '2017-02-26 22:53:13.143996',
