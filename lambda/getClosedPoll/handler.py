@@ -23,7 +23,7 @@ def lambda_handler(event, context):
     cursor.execute(query)
     results = cursor.fetchall()
 
-    user_bets_query = "select p.id from polls p left join bets b on p.id=b.poll_id where p.finished=false " \
+    user_bets_query = "select p.id from polls p left join bets b on p.id=b.poll_id where p.finished=true " \
                       "and p.is_pre=false and b.user_id=%d" % user_id
     cursor.execute(user_bets_query)
     personal_votes = cursor.fetchall()
