@@ -1,0 +1,24 @@
+-
+  question: Wed, Mar 8 Celtics vs. Warriors
+  answers:
+    - Celtics
+    - Warriors
+  close_time: 1489258327
+  buy_in: 40
+-
+  question: Wed, Mar 8 Jazz vs. Rockets
+  answers:
+    - Jazz
+    - Rockets
+  close_time: 1489258327
+  buy_in: 40
+-
+  question: How many 3's will Steph Curry attempt?
+  answers:
+    - less than 5
+    - 5-8
+    - 9, 10, or 11
+    - 12 or more
+  close_time: 1489258327
+  buy_in: 50
+

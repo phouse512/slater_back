@@ -198,7 +198,7 @@ def validate(poll_id, correct_id, cursor, conn):
         sys.exit()
 
 
-def run():
+def run(poll_id, correct_choice_id):
 
     with open('admin/db.yml', 'r') as stream:
         try:
@@ -216,14 +216,8 @@ def run():
                                   port=db_config['port'])
     cursor = connection.cursor()
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("poll_id", help="id of poll to close")
-    parser.add_argument("choice_id", help="id of choice to close")
-
-    args = parser.parse_args()
-
-    poll_id = int(args.poll_id)
-    choice_id = int(args.choice_id)
+    poll_id = int(poll_id)
+    choice_id = int(correct_choice_id)
 
     # TODO: query for title and answer
 

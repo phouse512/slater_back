@@ -21,7 +21,8 @@ account and a couple other cleanup tasks.
 
 #### unit tests
 
-to run the unit tests, run the following:
+to run the unit tests, run the following from the root directory of
+`slater_back`:
 
 ```
 python3 -m unittest

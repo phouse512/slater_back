@@ -8,7 +8,6 @@ def lambda_handler(event, context):
 
     user_id = int(event['requestContext']['authorizer']['principalId'])
 
-
     connection = psycopg2.connect(database=os.environ['db'],
                                   user=os.environ['user'],
                                   password=os.environ['password'],
