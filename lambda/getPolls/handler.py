@@ -11,6 +11,8 @@ def lambda_handler(event, context):
     bucket = 'slater-storage'
     key = 'data/polls.json'
 
+    user_id = int(event['requestContext']['authorizer']['principalId'])
+
     connection = psycopg2.connect(database=os.environ['db'],
                                   user=os.environ['user'],
                                   password=os.environ['password'],
@@ -34,6 +36,15 @@ def lambda_handler(event, context):
     for bet in bets:
         bets_dict[bet[0]] = bet[1]
 
+    user_bets_query = "select p.id from polls p left join bets b on p.id=b.poll_id where p.finished=false " \
+                      "and p.is_pre=false and b.user_id=%d" % user_id
+    cursor.execute(user_bets_query)
+    personal_votes = cursor.fetchall()
+
+    votes_dict = dict()
+    for vote in personal_votes:
+        votes_dict[vote[0]] = True
+
     connection.commit()
     polls = []
 
@@ -50,6 +61,9 @@ def lambda_handler(event, context):
         for answer in json_blob['answers']:
             answer['text'] = answer['title']
             answer.pop('title', None)
+
+        if poll[0] in personal_votes:
+            json_blob['voted'] = True
         polls.append(json_blob)
 
     return_object = {
