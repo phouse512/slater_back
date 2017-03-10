@@ -25,6 +25,15 @@ def lambda_handler(event, context):
     cursor.execute(query)
     results = cursor.fetchall()
 
+    bets_query = "select p.id, count(b) from polls p left join bets b on p.id=b.poll_id where p.finished=false " \
+                 "and p.is_pre=false group by p.id"
+    cursor.execute(bets_query)
+    bets = cursor.fetchall()
+
+    bets_dict = dict()
+    for bet in bets:
+        bets_dict[bet[0]] = bet[1]
+
     connection.commit()
     polls = []
 
@@ -33,7 +42,7 @@ def lambda_handler(event, context):
         json_blob['id'] = poll[0]
         json_blob['created'] = str(poll[6])
         json_blob['pre'] = str(poll[2]).lower()
-        json_blob['current_votes'] = 23
+        json_blob['current_votes'] = bets_dict[poll[0]]
         json_blob['answers'] = poll[7]
         json_blob['buy_in'] = poll[4]
         json_blob['question'] = poll[1]
