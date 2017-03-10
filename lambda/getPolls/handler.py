@@ -45,6 +45,8 @@ def lambda_handler(event, context):
     for vote in personal_votes:
         votes_dict[vote[0]] = True
 
+    print(votes_dict)
+
     connection.commit()
     polls = []
 
