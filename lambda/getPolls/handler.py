@@ -43,9 +43,7 @@ def lambda_handler(event, context):
 
     votes_dict = dict()
     for vote in personal_votes:
-        votes_dict[vote[0]] = True
-
-    print(votes_dict)
+        votes_dict[int(vote[0])] = True
 
     connection.commit()
     polls = []
@@ -63,8 +61,8 @@ def lambda_handler(event, context):
         for answer in json_blob['answers']:
             answer['text'] = answer['title']
             answer.pop('title', None)
-        print(poll[0])
-        if poll[0] in personal_votes:
+
+        if poll[0] in votes_dict:
             print("ha")
             json_blob['voted'] = True
         polls.append(json_blob)
