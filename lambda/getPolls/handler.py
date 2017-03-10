@@ -63,8 +63,9 @@ def lambda_handler(event, context):
             answer.pop('title', None)
 
         if poll[0] in votes_dict:
-            print("ha")
             json_blob['voted'] = True
+        else:
+            json_blob['voted'] = False
         polls.append(json_blob)
 
     return_object = {
