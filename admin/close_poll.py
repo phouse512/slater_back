@@ -1,11 +1,13 @@
-import argparse
-import psycopg2
 import sys
-import time
+from typing import List
+
+import psycopg2
 import yaml
 
-from typing import List
-from admin.transaction import Transaction
+from admin.shared.notification import Notification
+from admin.shared.notification_manager import NotificationManager
+from admin.shared.sender import IOSSender
+from admin.shared.transaction import Transaction
 
 yes = {'yes', 'y', 'ye'}
 no = {'no', 'n', ''}
@@ -167,12 +169,13 @@ def divide_pool(poll_id: int, correct_id: int, cursor, conn) -> List[Transaction
 
 def validate(poll_id, correct_id, cursor, conn):
 
-    poll_query = "SELECT title, finished, buy_in FROM polls WHERE id=%d" % poll_id
+    poll_query = "SELECT title, finished, buy_in FROM polls WHERE id=%d and has_paid=false and " \
+                 "is_pre=false and finished=true" % poll_id
     cursor.execute(poll_query)
     result = cursor.fetchone()
 
-    if not result[1]:
-        sys.stderr.write("Poll isn't closed yet. \n")
+    if not result:
+        sys.stderr.write("Poll doesn't exist yet. \n")
         return False
 
     choices_query = "SELECT id, title FROM poll_answers WHERE poll_id=%d" % poll_id
@@ -230,8 +233,11 @@ def run(poll_id, correct_choice_id):
     transactions = divide_pool(poll_id, choice_id, cursor, connection)
     send_transactions(poll_id, choice_id, transactions, cursor, connection)
 
+    notification_mgr = NotificationManager()
+    ios_sender = IOSSender()
+    ios_sender.load_db(cursor, connection)
+    notification_mgr.add_sender(ios_sender)
 
-
-
-
-
+    for transaction in transactions:
+        notification_mgr.send_notification(Notification.from_transaction(transaction, cursor,
+                                                                         connection))

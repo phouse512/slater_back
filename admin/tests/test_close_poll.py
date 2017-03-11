@@ -1,8 +1,8 @@
 import unittest
+from unittest.mock import MagicMock
 
 from admin.close_poll import divide_pool
-from admin.transaction import Transaction
-from unittest.mock import MagicMock
+from admin.shared.transaction import Transaction
 
 
 def check_equal(l1, l2):

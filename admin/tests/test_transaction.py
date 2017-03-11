@@ -1,6 +1,6 @@
 import unittest
 
-from admin.transaction import Transaction
+from admin.shared.transaction import Transaction
 
 
 class TransactionTests(unittest.TestCase):
