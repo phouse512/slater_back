@@ -40,6 +40,6 @@ class IOSSender(Sender):
         message = notification.message
 
         subprocess.call('/Users/PhilipHouse/Documents/Programming/ios_projects/gorush -ios -m "%s" '
-                        '-i="/Users/PhilipHouse/Documents/Programming/ios_projects/slaterPush.pem" -t="%s" '
-                        '-topic="come.phizzle.slater"' % (message, device_token), shell=True)
+                        '-i="/Users/PhilipHouse/Desktop/pushcert.pem" -t="%s" '
+                        '-topic="come.phizzle.slater" -production' % (message, device_token), shell=True)
 
