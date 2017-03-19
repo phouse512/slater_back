@@ -66,6 +66,14 @@ def lambda_handler(event, context):
     user_bank_id = user_bank_result[0]
     user_bank_balance = user_bank_result[1]
 
+    if user_bank_balance < poll_buyin:
+
+        return {
+            'statusCode': 400,
+            'headers': {},
+            'body': json.dumps({"error": "not enough money left for user: %d" % user_id})
+        }
+
     """
         now we have validated what we needed to do, and are sure that both users/bank accounts
         and polls exist. time for the bet logic.
