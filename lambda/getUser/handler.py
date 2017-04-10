@@ -9,7 +9,7 @@ s3 = boto3.client('s3')
 
 def lambda_handler(event, context):
 
-    telnetlib.Telnet(os.environ['host'], os.environ['port'])
+    print(telnetlib.Telnet(os.environ['host'], os.environ['port']))
 
     connection = psycopg2.connect(database=os.environ['db'],
                                   user=os.environ['user'],
